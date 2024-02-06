@@ -1,13 +1,14 @@
 const express = require('express')
-const indexRoute = require('./routes/indexRoute')
-const path = require('path')
+const mainRoute = require('./routes/indexRoute')
+const cookieParser = require("cookie-parser");
 const app = express()
 require("./db/dbConnect")
-const port = 3001
 
+app.use(cookieParser())
 app.use(express.json())
-app.use(indexRoute)
+app.use(mainRoute)
 
+const port = process.env.PORT || 3001
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
