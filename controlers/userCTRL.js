@@ -1,5 +1,7 @@
+require("dotenv").config()
 const { UserModel, validateUser } = require("../models/userModel")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 const userCTRL = {
     getUser: (req, res) => {
@@ -28,13 +30,13 @@ const userCTRL = {
             console.log(err);
             res.status(502).json({ err })
         }
-
     },
     loginUser: async (req, res) => {
         const validate = validateUser(req.body, req.url)
         if (validate.error) {
             return res.status(400).json(validate.error.details)
         }
+
         const { password, email } = req.body
         try {
             const user = await UserModel.findOne({ email })
@@ -43,15 +45,22 @@ const userCTRL = {
             if (!match) {
                 return res.status(401).json({ err: "password is incorrect" })
             }
-            user.password = "********"
-            res.status(200).json(user)
+
+            var token = jwt.sign({ foo: 'bar' }, process.env.TOKEN_KEY);
+            res.status(200).json({ token })
         }
         catch (err) {
             console.log(err);
             res.status(502).json({ err })
         }
-
     }
 }
+// var token = jwt.sign({ foo: 'bar' }, 'shhhhh');
+
+// try {
+//     var decoded = jwt.verify(token, 'wrong-secret');
+//   } catch(err) {
+//     // err
+//   }
 
 module.exports = userCTRL;
