@@ -54,7 +54,6 @@ const userCTRL = {
     getUser: async ({ user: tokenUser }, res, next) => {
         try {
             const user = await UserModel.findOne({ _id: tokenUser._id })
-            console.log(user);
             user.password = "********"
             res.status(200).json(user)
         } catch (err) {
