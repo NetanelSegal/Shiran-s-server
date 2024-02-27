@@ -12,13 +12,13 @@ const UserModel = mongoose.model('users', userSchema);
 
 const joiRegisterSchema = Joi.object({
     username: Joi.string().min(3).max(30).required(),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+    password: Joi.string().min(6).max(16).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required(),
     email: Joi.string().email().required()
 })
 
 const joiLoginSchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+    password: Joi.string().min(6).max(16).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required(),
 })
 
 const validateUser = (body, route) => {

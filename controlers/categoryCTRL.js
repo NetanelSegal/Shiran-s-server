@@ -3,7 +3,7 @@ const { CategoryModel, validateCategory } = require("../models/categoryModel");
 const categoryCtrl = {
     getCategories: async (_, res, next) => {
         try {
-            const data = await CategoryModel.find({})
+            const data = await CategoryModel.find({}, { _id: 0, title: 1, urlCode: 1 })
             res.json(data)
         }
         catch (err) {

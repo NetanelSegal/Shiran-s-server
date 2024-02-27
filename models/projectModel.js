@@ -5,10 +5,14 @@ const projectSchema = new mongoose.Schema({
     title: String,
     categories: [String],
     description: String,
-    images: [String], // Array of image URLs
+    mainImage: String,
+    images: [String],
     location: String,
     client: String,
-    completionDate: Date,
+    isCompleted: {
+        type: Boolean, default: false
+    },
+    constructionArea: Number,
     favourite: {
         type: Boolean, default: false
     }
@@ -17,13 +21,16 @@ const projectSchema = new mongoose.Schema({
 const ProjectModel = mongoose.model("Project", projectSchema);
 
 const joiProjectSchema = Joi.object({
-    title: Joi.string().min(3).max(255).required(),
+    title: Joi.string().min(5).max(50).required(),
     categories: Joi.array().items(Joi.string()).required(),
-    description: Joi.string().required(),
+    description: Joi.string().min(20).max(500).required(),
+    isCompleted: Joi.boolean().required(),
+    mainImage: Joi.string().allow(null, ""),
     images: Joi.array().items(Joi.string()),
-    location: Joi.string().required(),
-    client: Joi.string().allow(null, ""),
-    completionDate: Joi.date().allow(null, ""),
+    location: Joi.string().min(3).max(50).required(),
+    client: Joi.string().min(3).max(50).required(),
+    constructionArea: Joi.number().min(10).max(1500).required(),
+    favourite: Joi.boolean().allow(null),
 });
 
 const validateProject = (project) => {

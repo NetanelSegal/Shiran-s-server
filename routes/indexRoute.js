@@ -11,10 +11,12 @@ router.use("/", (_, res) => res.json({ msg: "index route working" }))
 
 router.use((err, _, res, __) => {
     const errorObject = {};
-    if (err.stack) errorObject.stack = err.stack;
-    errorObject.message = err.message ?? "There was an error";
-    console.error(errorObject);
-    return res.status(err.status ?? 500).json(errorObject);
-})
+    errorObject.stack = err.stack || "no stack";
+    errorObject.message = err.message || "There was an error";
+    const status = err.status || 500;
+    console.log(errorObject);
+    return res.status(status).json(errorObject);
+});
+
 
 module.exports = router

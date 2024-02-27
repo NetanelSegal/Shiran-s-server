@@ -45,7 +45,9 @@ const userCTRL = {
                 role: user.role
             },
                 process.env.TOKEN_KEY, { expiresIn: "30d" })
-            res.cookie("token", token).status(200).json({ user: user, message: "user logged in successfully", token: token })
+            res.cookie("token", token, {
+                httpOnly: false,
+            }).status(200).json({ user: user, message: "user logged in successfully", token: token })
         }
         catch (err) {
             next({ stack: err })
@@ -53,7 +55,7 @@ const userCTRL = {
     },
     getUser: async ({ user: tokenUser }, res, next) => {
         try {
-            const user = await UserModel.findOne({ _id: tokenUser._id })
+            const user = await UserModel.findOne({ _id: tokenUser._id }, { email: 1, username: 1, role: 1, _id: 0 })
             user.password = "********"
             res.status(200).json(user)
         } catch (err) {

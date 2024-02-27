@@ -5,7 +5,7 @@ const auth = (req, _, next) => {
     try {
         const token = req.cookies.token
         if (!token) {
-            next({ status: 400, message: "no token" })
+            next({ status: 400, message: "Token invalide or expiered" })
         }
         req.user = jwt.verify(token, process.env.TOKEN_KEY);
         next();

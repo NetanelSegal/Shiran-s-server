@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const { getProjects, addProject, getProjectById, getProjectsByCategory, addImgToProject, getFavouriteProjects, deleteProject, updateProject }
+const { getProjects, addProject, getProjectById, deleteMainImage, getProjectsByCategory, addImgToProject, getFavouriteProjects, deleteProject, updateProject, deleteFromImages }
     = require("../controlers/projectCTRL")
 const { auth, authAdmin } = require("../middlewares/auth")
+const { upload } = require('../middlewares/uploadFiles')
 
 router.get("/", getProjects)
 
@@ -14,7 +15,11 @@ router.get("/category/:cat", getProjectsByCategory)
 
 router.post("/", auth, authAdmin, addProject)
 
-router.post("/uploadImg/:id", auth, authAdmin, addImgToProject)
+router.post("/uploadImgs/:id", auth, authAdmin, upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "projectImgs", maxCount: 10 }]), addImgToProject)
+
+router.delete("/deleteMainImage/:id", auth, authAdmin, deleteMainImage)
+
+router.post("/deleteImages/:id", auth, authAdmin, deleteFromImages)
 
 router.delete("/:id", auth, authAdmin, deleteProject)
 
