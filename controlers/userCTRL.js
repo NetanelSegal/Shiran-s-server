@@ -44,9 +44,10 @@ const userCTRL = {
                 email: user.email,
                 role: user.role
             },
-                process.env.TOKEN_KEY, { expiresIn: "30d" })
+                process.env.TOKEN_KEY, { expiresIn: "1d" })
             res.cookie("token", token, {
                 httpOnly: false,
+                maxAge: 24 * 60 * 60 * 1000
             }).status(200).json({ user: user, message: "user logged in successfully", token: token })
         }
         catch (err) {

@@ -15,7 +15,7 @@ router.get("/category/:cat", getProjectsByCategory)
 
 router.post("/", auth, authAdmin, addProject)
 
-router.post("/uploadImgs/:id", auth, authAdmin, upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "projectImgs", maxCount: 10 }]), addImgToProject)
+router.post("/uploadImgs/:id", auth, authAdmin, upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "projectImgs", maxCount: 5 }, { name: "projectPlans", maxCount: 5 }]), addImgToProject)
 
 router.delete("/deleteMainImage/:id", auth, authAdmin, deleteMainImage)
 

@@ -7,6 +7,7 @@ const projectSchema = new mongoose.Schema({
     description: String,
     mainImage: String,
     images: [String],
+    plans: [String],
     location: String,
     client: String,
     isCompleted: {
@@ -23,10 +24,11 @@ const ProjectModel = mongoose.model("Project", projectSchema);
 const joiProjectSchema = Joi.object({
     title: Joi.string().min(5).max(50).required(),
     categories: Joi.array().items(Joi.string()).required(),
-    description: Joi.string().min(20).max(500).required(),
+    description: Joi.string().min(5).max(500).required(),
     isCompleted: Joi.boolean().required(),
     mainImage: Joi.string().allow(null, ""),
     images: Joi.array().items(Joi.string()),
+    plans: Joi.array().items(Joi.string()),
     location: Joi.string().min(3).max(50).required(),
     client: Joi.string().min(3).max(50).required(),
     constructionArea: Joi.number().min(10).max(1500).required(),

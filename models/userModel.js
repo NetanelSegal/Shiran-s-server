@@ -28,4 +28,4 @@ const validateUser = (body, route) => {
     return joiRegisterSchema.validate(body)
 }
 
-module.exports = { UserModel, validateUser }; 
+module.exports = { UserModel, validateUser };

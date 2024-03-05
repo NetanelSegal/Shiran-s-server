@@ -60,10 +60,11 @@ const projectCTRL = {
 
             const imagesNames = {
                 mainImage: req.files?.mainImg?.[0].filename || false,
-                images: req.files?.projectImgs ? req.files.projectImgs.map(i => i.filename) : false
+                images: req.files?.projectImgs ? req.files.projectImgs.map(i => i.filename) : false,
+                plans: req.files?.projectPlans ? req.files.projectPlans.map(i => i.filename) : false
             }
 
-            if (!imagesNames.images && !imagesNames.mainImage) {
+            if (!imagesNames.images && !imagesNames.mainImage && !imagesNames.plans) {
                 return res.status(200).json({ msg: "no file was uploaded" });
             }
 
@@ -76,8 +77,15 @@ const projectCTRL = {
             if (imagesNames.images) {
                 updateObj = { ...updateObj, $push: { images: imagesNames.images } }
             }
+
+            if (imagesNames.plans) {
+                updateObj = { ...updateObj, $push: { plans: imagesNames.plans } }
+            }
+
+            console.log("updateObj: ", updateObj);
+
             const update = await ProjectModel.updateOne({ _id }, updateObj)
-            res.status(200).json({ mainImage: imagesNames.mainImage || "wasnt uploaded", images: imagesNames.images || "wasnt uploaded", update });
+            res.status(200).json({ mainImage: imagesNames.mainImage || "wasnt uploaded", images: imagesNames.images || "wasnt uploaded", plans: imagesNames.plans || "wasnt uploaded", update });
         }
         catch (err) {
             next({ stack: err })
@@ -107,23 +115,43 @@ const projectCTRL = {
     deleteFromImages: async ({ params, body }, res, next) => {
         let _id = params.id;
         let imagesNames = body.imagesToDelete
+        let plansNames = body.plansToDelete
         try {
-            if (!imagesNames || imagesNames?.length == 0) {
-                return next({ status: 400, message: "You have to send array of image names to delete" })
+            if (!imagesNames && !plansNames) {
+                return next({ status: 400, message: "You have to send array of image or plans names to delete" })
             }
 
-            imagesNames.forEach(async (i) => {
-                try {
-                    const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
-                    await fs.unlink(imgPath);
-                } catch (error) {
-                    if (error.code == "ENOENT") {
-                        return next({ status: 400, message: "The file " + i + " dosn't exist" })
+            if (imagesNames) {
+                imagesNames.forEach(async (i) => {
+                    try {
+                        const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
+                        await fs.unlink(imgPath);
+                    } catch (error) {
+                        if (error.code == "ENOENT") {
+                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        }
                     }
-                }
-            })
+                })
+            }
 
-            const data = await ProjectModel.updateOne({ _id }, { $pull: { images: { $in: imagesNames } } })
+            if (plansNames) {
+                plansNames.forEach(async (i) => {
+                    try {
+                        const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
+                        await fs.unlink(imgPath);
+                    } catch (error) {
+                        if (error.code == "ENOENT") {
+                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        }
+                    }
+                })
+            }
+
+            const updateObj = {
+                images: imagesNames && { $in: imagesNames },
+                plans: plansNames && { $in: plansNames },
+            }
+            const data = await ProjectModel.updateOne({ _id }, { $pull: updateObj })
             return res.status(200).json({ msg: "Images deleted successfully", update: data })
         }
         catch (err) {
