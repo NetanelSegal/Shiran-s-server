@@ -1,5 +1,6 @@
 const path = require("path");
 const { ProjectModel, validateProject } = require("../models/projectModel");
+const { stack } = require("../routes/usersRoute");
 const fs = require("fs").promises
 
 const projectCTRL = {
@@ -101,9 +102,16 @@ const projectCTRL = {
             if (!mainImage || mainImage == "") {
                 return next({ status: 400, message: "Current project doesn't have a main image yet" })
             }
-
             const imgPath = path.join(__dirname, "..", 'public/uploads/' + mainImage)
-            await fs.unlink(imgPath);
+
+            try {
+                await fs.unlink(imgPath);
+            } catch (error) {
+                if (error.errno != -4058) {
+                    throw error
+                }
+            }
+
             const data = await ProjectModel.updateOne({ _id }, { $set: { mainImage: "" } })
             return res.status(200).json({ msg: "Main image deleted successfully", update: data })
         }
@@ -127,8 +135,8 @@ const projectCTRL = {
                         const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
                         await fs.unlink(imgPath);
                     } catch (error) {
-                        if (error.code == "ENOENT") {
-                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        if (error.errno != -4058) {
+                            throw error
                         }
                     }
                 })
@@ -140,8 +148,8 @@ const projectCTRL = {
                         const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
                         await fs.unlink(imgPath);
                     } catch (error) {
-                        if (error.code == "ENOENT") {
-                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        if (error.errno != -4058) {
+                            throw error
                         }
                     }
                 })
