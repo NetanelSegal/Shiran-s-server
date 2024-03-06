@@ -80,10 +80,8 @@ const projectCTRL = {
             }
 
             if (imagesNames.plans) {
-                updateObj = { ...updateObj, $push: { plans: imagesNames.plans } }
+                updateObj = { ...updateObj, $push: { ...updateObj.$push, plans: imagesNames.plans } }
             }
-
-            console.log("updateObj: ", updateObj);
 
             const update = await ProjectModel.updateOne({ _id }, updateObj)
             res.status(200).json({ mainImage: imagesNames.mainImage || "wasnt uploaded", images: imagesNames.images || "wasnt uploaded", plans: imagesNames.plans || "wasnt uploaded", update });
