@@ -88,7 +88,6 @@ const projectCTRL = {
         }
         catch (err) {
             next({ stack: err })
-
         }
 
     },

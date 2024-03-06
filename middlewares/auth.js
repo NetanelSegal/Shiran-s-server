@@ -4,6 +4,8 @@ require("dotenv").config()
 const auth = (req, _, next) => {
     try {
         const token = req.cookies.token
+        console.log("req.cookies", req.cookies);
+        console.log("token", token);
         if (!token) {
             next({ status: 400, message: "Token invalide or expiered" })
         }
