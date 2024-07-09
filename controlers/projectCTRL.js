@@ -37,8 +37,6 @@ const projectCTRL = {
         }
     },
     addProject: async ({ body, files }, res, next) => {
-        console.log(files);
-        console.log(body);
         const validate = validateProject(body)
         if (validate.error) {
             return next({ status: 400, stack: validate.error.details })
@@ -177,24 +175,39 @@ const projectCTRL = {
     },
     deleteProject: async ({ params }, res, next) => {
         try {
-            const { mainImage, images } = await ProjectModel.findOne({ _id: params.id }, { mainImage: 1, images: 1 })
-
-            console.log(mainImage, images);
+            const { mainImage, images, plans } = await ProjectModel.findOne({ _id: params.id }, { mainImage: 1, images: 1, plans: 1 })
 
 
-            const imgPath = path.join(__dirname, "..", 'public/uploads/' + mainImage)
-            console.log(await fs.unlink(imgPath));
+            if (mainImage != "") {
+                const imgPath = path.join(__dirname, "..", 'public/uploads/' + mainImage)
+                await fs.unlink(imgPath)
+            }
 
-            images.forEach(async (i) => {
-                try {
-                    const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
-                    await fs.unlink(imgPath);
-                } catch (error) {
-                    if (error.code == "ENOENT") {
-                        return next({ status: 400, message: "The file " + i + " dosn't exist" })
+            if (images.length > 0) {
+                images.forEach(async (i) => {
+                    try {
+                        const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
+                        await fs.unlink(imgPath);
+                    } catch (error) {
+                        if (error.code == "ENOENT") {
+                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        }
                     }
-                }
-            })
+                })
+            }
+
+            if (plans.length > 0) {
+                plans.forEach(async (i) => {
+                    try {
+                        const imgPath = path.join(__dirname, "..", 'public/uploads/' + i)
+                        await fs.unlink(imgPath);
+                    } catch (error) {
+                        if (error.code == "ENOENT") {
+                            return next({ status: 400, message: "The file " + i + " dosn't exist" })
+                        }
+                    }
+                })
+            }
             const data = await ProjectModel.deleteOne({ _id: params.id })
             res.json(data)
         } catch (err) {

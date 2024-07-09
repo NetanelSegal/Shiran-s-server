@@ -1,9 +1,10 @@
 const express = require('express')
-const router = express.Router()
 const { getProjects, addProject, getProjectById, deleteMainImage, getProjectsByCategory, addImgToProject, getFavouriteProjects, deleteProject, updateProject, deleteFromImages }
     = require("../controlers/projectCTRL")
 const { auth, authAdmin } = require("../middlewares/auth")
 const { upload } = require('../middlewares/uploadFiles')
+
+const router = express.Router()
 
 router.get("/", getProjects)
 

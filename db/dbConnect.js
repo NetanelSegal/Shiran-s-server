@@ -6,5 +6,4 @@ const main = async () => {
     console.log("mongo connected");
 }
 
-main().catch(e => console.log(e))
-
+main().catch(e => console.error(e))

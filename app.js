@@ -4,10 +4,11 @@ const express = require('express')
 const mainRoute = require('./routes/indexRoute')
 const cookieParser = require("cookie-parser");
 const app = express()
+
 require("./db/dbConnect")
 
 app.use(cors({
-    origin: true,
+    origin: ["https://shiran-website.onrender.com"],
     credentials: true
 }))
 
@@ -19,5 +20,5 @@ app.use(mainRoute)
 const port = process.env.PORT || 3001
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Listening on port ${port}`)
 })

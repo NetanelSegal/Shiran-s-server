@@ -14,7 +14,7 @@ router.use((err, _, res, __) => {
     errorObject.stack = err.stack || "no stack";
     errorObject.message = err.message || "There was an error";
     const status = err.status || 500;
-    console.log(errorObject);
+    console.error(JSON.stringify(errorObject));
     return res.status(status).json(errorObject);
 });
 
